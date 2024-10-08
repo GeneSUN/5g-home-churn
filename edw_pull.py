@@ -44,6 +44,11 @@ if __name__ == "__main__":
                         .config("spark.ui.port","24040")\
                         .getOrCreate()
     parser = argparse.ArgumentParser(description="Inputs for generating Post SNA Maintenance Script Trial")
+    hdfs_pa  = 'hdfs://njbbepapa1.nss.vzwnet.com:9000'
+    hdfs_pd  = 'hdfs://njbbvmaspd11.nss.vzwnet.com:9000'
+
+    rpt_mth_value = 1240601
+
     churn_query = """
         with Fixed_fiveg as (
         select CUST_ID, mtn, chnl_nm, install_type, sales_dt, install_dt
@@ -116,7 +121,7 @@ if __name__ == "__main__":
         AND dla.cust_line_seq_id = deactive.cust_line_seq_id
         AND deactive.activity_cd in ('de','d3') 
         AND deactive.activity_dt > dla.activity_dt 
-        AND deactive.rpt_mth >= 1240101
+        AND deactive.rpt_mth >= {}
         
         LEFT JOIN PPLAN
         ON PPLAN.PPLAN_CD = dla.PPLAN_CD
@@ -138,7 +143,7 @@ if __name__ == "__main__":
         ON cust_line_dim_hist_v.dim_value = segment_table.vz2_segmt_cd
         AND segment_table.curr_prev_ind = 'c'
 
-        WHERE dla.rpt_mth >= 1240101
+        WHERE dla.rpt_mth >= {}
         AND dla.prepaid_ind = 'n'
         AND dla.rev_gen_ind = 'y'
         AND dla.managed_ind = 'c'
@@ -187,47 +192,48 @@ if __name__ == "__main__":
         AND deactive_customer.mtn = Fixed_fiveg.mtn
 
         WHERE technology <> 'other'
-    """
+    """.format(rpt_mth_value,rpt_mth_value)
+    
+
     fiveg_customer_query = """
-                        SELECT cust_id,
-                            cust_line_seq_id,
-                            mtn,
-                            PPLAN_CD,
-                            activity_dt,
-                            activity_cd,
-                            eqp_prod_nm,
-                            acct_num,
-                            CHANGE_REAS_CD,
-                            rpt_mth,
-                            prepaid_ind,
-                            rev_gen_ind,
-                            managed_ind,
-                            line_type_cd,
-                            coe_pplan_sub_type_desc
-                        FROM dla_sum_fact_v
-                        WHERE rpt_mth >= 1240101 or activity_dt >= 1240101
-                        AND coe_pplan_sub_type_desc IN ('5G Business Internet mmWave','5G Business Internet C-Band','5G Home mmWave','5G Home C-Band','4G LTE Home')
-                """
+            SELECT cust_id,
+                cust_line_seq_id,
+                mtn,
+                PPLAN_CD,
+                activity_dt,
+                activity_cd,
+                eqp_prod_nm,
+                acct_num,
+                CHANGE_REAS_CD,
+                rpt_mth,
+                prepaid_ind,
+                rev_gen_ind,
+                managed_ind,
+                line_type_cd,
+                coe_pplan_sub_type_desc
+            FROM dla_sum_fact_v
+            WHERE (rpt_mth >= {} OR activity_dt >= {})
+            AND coe_pplan_sub_type_desc IN ('5G Business Internet mmWave','5G Business Internet C-Band','5G Home mmWave','5G Home C-Band','4G LTE Home')
+        """.format(rpt_mth_value, rpt_mth_value)
+
     import teradatasql
 
+    fiveg_customer_df = query_to_edw(fiveg_customer_query)
+    fiveg_customer_df.write\
+                    .mode("overwrite")\
+                    .parquet(hdfs_pd + f"/user/ZheS/5g_Churn/fiveg_customer_df" )
 
-    churn_df = query_to_edw(fiveg_customer_query)
+    """
+
+    churn_df = query_to_edw(churn_query)
 
     hdfs_pa  = 'hdfs://njbbepapa1.nss.vzwnet.com:9000'
     hdfs_pd  = 'hdfs://njbbvmaspd11.nss.vzwnet.com:9000'
     churn_df.write\
             .mode("overwrite")\
-            .parquet(hdfs_pd + f"/user/ZheS/5g_Churn/fiveg_customer_df" )
-
-    all_customer_df = query_to_edw(churn_query)
-
-    hdfs_pa  = 'hdfs://njbbepapa1.nss.vzwnet.com:9000'
-    hdfs_pd  = 'hdfs://njbbvmaspd11.nss.vzwnet.com:9000'
-    all_customer_df.write\
-            .mode("overwrite")\
-            .parquet(hdfs_pd + f"/user/ZheS/5g_Churn/all_customer_df" )   
+            .parquet(hdfs_pd + f"/user/ZheS/5g_Churn/churn_df" )   
     """
-    """
+
 
     sys.exit()
 
@@ -329,8 +335,8 @@ if __name__ == "__main__":
                 AND dla.cust_line_seq_id = de.cust_line_seq_id
                 AND de.activity_cd in ('de','d3') 
                 AND de.activity_dt > dla.activity_dt 
-                AND de.rpt_mth >= 1240101
-                WHERE dla.rpt_mth >= 1240101 
+                AND de.rpt_mth >= {}
+                WHERE dla.rpt_mth >= {} 
                 AND dla.prepaid_ind = 'n'
                 AND dla.rev_gen_ind = 'y'
                 AND dla.managed_ind = 'c'
@@ -365,5 +371,5 @@ if __name__ == "__main__":
                 AND c.mtn = x.mtn
                 qualify rank() OVER (PARTITION BY x.cust_id,x.mtn ORDER BY deact_dt desc) = 1) x
                 WHERE technology <> 'other'
-                    """
+                    """.format(rpt_mth_value,rpt_mth_value)
     
