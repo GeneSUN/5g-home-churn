@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 import numpy as np
 import sys 
-sys.path.append('/usr/apps/vmas/scripts/ZS') 
+sys.path.append('/usr/apps/vmas/script/ZS') 
 from MailSender import MailSender
 from pyspark.sql.functions import from_unixtime 
 import argparse 
@@ -23,7 +23,10 @@ from datetime import datetime, timedelta
 
 def read_and_union_parquet_by_date(cpe_start_date_str: str, cpe_end_date_str: str, features=None):
     if features is None:
-        features = ["dataScore","networkSpeedScore","networkSignalScore","networkFailureScore","deviceScore"]
+        features = ["scaled_5g_uptime","scaled_fiveg_usage_percentage","scaled_sqrt_data_usage",
+                    "scaled_uploadresult","scaled_downloadresult","scaled_latency",
+                    "scaled_RSRP","scaled_avg_CQI","scaled_SNR",
+                    "dataScore","networkSpeedScore","networkSignalScore","networkFailureScore","deviceScore"]
 
     start_date = datetime.strptime(cpe_start_date_str, '%Y-%m-%d')
     end_date = datetime.strptime(cpe_end_date_str, '%Y-%m-%d')
