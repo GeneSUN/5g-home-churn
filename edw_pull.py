@@ -47,7 +47,7 @@ if __name__ == "__main__":
     hdfs_pa  = 'hdfs://njbbepapa1.nss.vzwnet.com:9000'
     hdfs_pd  = 'hdfs://njbbvmaspd11.nss.vzwnet.com:9000'
 
-    rpt_mth_value = 1240601
+    rpt_mth_value = 1230101
 
     churn_query = """
         with Fixed_fiveg as (
@@ -223,7 +223,7 @@ if __name__ == "__main__":
                     .mode("overwrite")\
                     .parquet(hdfs_pd + f"/user/ZheS/5g_Churn/fiveg_customer_df" )
 
-    """
+
 
     churn_df = query_to_edw(churn_query)
 
@@ -234,7 +234,7 @@ if __name__ == "__main__":
             .parquet(hdfs_pd + f"/user/ZheS/5g_Churn/churn_df" )   
     """
 
-
+    """
     sys.exit()
 
     test_query = """
