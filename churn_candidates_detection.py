@@ -26,7 +26,8 @@ def read_and_union_parquet_by_date(cpe_start_date_str: str, cpe_end_date_str: st
         features = ["scaled_5g_uptime","scaled_fiveg_usage_percentage","scaled_sqrt_data_usage",
                     "scaled_uploadresult","scaled_downloadresult","scaled_latency",
                     "scaled_RSRP","scaled_avg_CQI","scaled_SNR",
-                    "dataScore","networkSpeedScore","networkSignalScore","networkFailureScore","deviceScore"]
+                    "dataScore","networkSpeedScore","networkSignalScore","networkFailureScore","deviceScore",
+                    ]
 
     start_date = datetime.strptime(cpe_start_date_str, '%Y-%m-%d')
     end_date = datetime.strptime(cpe_end_date_str, '%Y-%m-%d')
@@ -122,5 +123,5 @@ if __name__ == "__main__":
     hdfs_pa =  'hdfs://njbbepapa1.nss.vzwnet.com:9000'
     analyzer = CPEChurnAnalyzer( )
     #print( analyzer.churn_user_cpe_features.columns )
-    analyzer.churn_user_cpe_features.write.mode("overwrite").parquet(hdfs_pd + f"/user/ZheS/5g_Churn/churn_user_cpe_features" ) 
-    analyzer.active_not_churn_df.write.mode("overwrite").parquet(hdfs_pd + f"/user/ZheS/5g_Churn/active_not_churn_df" ) 
+    analyzer.churn_user_cpe_features.write.mode("overwrite").parquet(hdfs_pd + f"/user/ZheS/5g_Churn/churn_cpe_features" ) 
+    analyzer.active_not_churn_df.write.mode("overwrite").parquet(hdfs_pd + f"/user/ZheS/5g_Churn/active_cpe_features" ) 
