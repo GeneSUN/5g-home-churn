@@ -102,7 +102,7 @@ class CPEChurnAnalyzer:
                                         )
 
         result_df = activity_count_df.filter(
-                                                (F.col("ac_count") == 1) & (F.col("de_d3_count") == 0)
+                                                 (F.col("de_d3_count") == 0)
                                             )\
                                     .select("cust_id", "mdn_5g")
 
