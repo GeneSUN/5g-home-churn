@@ -196,25 +196,76 @@ if __name__ == "__main__":
     
 
     fiveg_customer_query = """
-            SELECT cust_id,
-                cust_line_seq_id,
-                mtn,
-                PPLAN_CD,
-                activity_dt,
-                activity_cd,
-                eqp_prod_nm,
-                acct_num,
-                CHANGE_REAS_CD,
-                rpt_mth,
-                prepaid_ind,
-                rev_gen_ind,
-                managed_ind,
-                line_type_cd,
-                coe_pplan_sub_type_desc
-            FROM dla_sum_fact_v
-            WHERE (rpt_mth >= {} OR activity_dt >= {})
-            AND coe_pplan_sub_type_desc IN ('5G Business Internet mmWave','5G Business Internet C-Band','5G Home mmWave','5G Home C-Band','4G LTE Home')
-        """.format(rpt_mth_value, rpt_mth_value)
+            WITH Fixed_fiveg AS (
+                SELECT
+                    CUST_ID,
+                    mtn,
+                    chnl_nm,
+                    install_type,
+                    sales_dt,
+                    install_dt,
+                    DWELLING_TYPE,
+                    CUST_TYPE_CD,
+                    MARKET_TYPE,
+                    CMA_NM,
+                    CUST_EMAIL_ADDR,
+                    SVC_STATE_CD,
+                    CUST_TYPE_DESC,
+                    VERTICAL,
+                    STATUS,
+                    ORDER_FULFILMENT,
+                    SKU_ID,
+                    DEVICE_TYPE_DESC,
+                    PPLAN_CTGRY_DESC,
+                    USAGE_FLAG,
+                    PRE_CHECK_STATUS,
+                    DISCOUNT_SVC_PROD_DESC
+                FROM NTL_PRD_ALLVM.FIXED_5G_SUMMARY_FACT_V
+            )
+
+            SELECT 
+                dsf.cust_id,
+                dsf.cust_line_seq_id,
+                dsf.mtn,
+                dsf.PPLAN_CD,
+                dsf.activity_dt,
+                dsf.activity_cd,
+                dsf.eqp_prod_nm,
+                dsf.acct_num,
+                dsf.CHANGE_REAS_CD,
+                dsf.rpt_mth,
+                dsf.prepaid_ind,
+                dsf.rev_gen_ind,
+                dsf.managed_ind,
+                dsf.line_type_cd,
+                dsf.coe_pplan_sub_type_desc,
+                ffg.chnl_nm,
+                ffg.install_type,
+                ffg.sales_dt,
+                ffg.install_dt,
+                ffg.DWELLING_TYPE,
+                ffg.CUST_TYPE_CD,
+                ffg.MARKET_TYPE,
+                ffg.CMA_NM,
+                ffg.CUST_EMAIL_ADDR,
+                ffg.SVC_STATE_CD,
+                ffg.CUST_TYPE_DESC,
+                ffg.VERTICAL,
+                ffg.STATUS,
+                ffg.ORDER_FULFILMENT,
+                ffg.SKU_ID,
+                ffg.DEVICE_TYPE_DESC,
+                ffg.PPLAN_CTGRY_DESC,
+                ffg.USAGE_FLAG,
+                ffg.PRE_CHECK_STATUS,
+                ffg.DISCOUNT_SVC_PROD_DESC
+            FROM dla_sum_fact_v dsf
+            LEFT JOIN Fixed_fiveg ffg
+                ON dsf.cust_id = ffg.cust_id
+                AND dsf.mtn = ffg.mtn
+            WHERE (dsf.rpt_mth >= {} OR dsf.activity_dt >= {})
+            AND dsf.coe_pplan_sub_type_desc IN ('5G Business Internet mmWave', '5G Business Internet C-Band', '5G Home mmWave', '5G Home C-Band', '4G LTE Home')
+            """.format(rpt_mth_value, rpt_mth_value)
 
     import teradatasql
 
