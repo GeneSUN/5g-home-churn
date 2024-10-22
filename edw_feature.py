@@ -35,26 +35,6 @@ if __name__ == "__main__":
     hdfs_pa = 'hdfs://njbbepapa1.nss.vzwnet.com:9000'
 
     rpt_mth_value = 1230101
-    trail_query = """
-            SELECT cust_id,
-                cust_line_seq_id,
-                mtn,
-                PPLAN_CD,
-                activity_dt,
-                activity_cd,
-                eqp_prod_nm,
-                acct_num,
-                CHANGE_REAS_CD,
-                rpt_mth,
-                prepaid_ind,
-                rev_gen_ind,
-                managed_ind,
-                line_type_cd,
-                coe_pplan_sub_type_desc
-            FROM dla_sum_fact_v
-            WHERE (rpt_mth >= {} OR activity_dt >= {})
-            AND coe_pplan_sub_type_desc IN ('5G Business Internet mmWave','5G Business Internet C-Band','5G Home mmWave','5G Home C-Band','4G LTE Home')
-        """.format(rpt_mth_value, rpt_mth_value)
     
     install_query = """
             WITH Fixed_fiveg AS (
