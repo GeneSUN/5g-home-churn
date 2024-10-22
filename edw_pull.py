@@ -48,7 +48,9 @@ if __name__ == "__main__":
     hdfs_pd  = 'hdfs://njbbvmaspd11.nss.vzwnet.com:9000'
 
     rpt_mth_value = 1230101
-
+    rpt_mth_value_start = 1230101  # Date after which you want records 
+    rpt_mth_value_end = 1241001    # Date before which you want records
+    
     churn_query = """
                 WITH deactive_customer AS (
                     SELECT 
@@ -170,9 +172,11 @@ if __name__ == "__main__":
             LEFT JOIN Fixed_fiveg ffg
                 ON dsf.cust_id = ffg.cust_id
                 AND dsf.mtn = ffg.mtn
-            WHERE (dsf.rpt_mth >= {} OR dsf.activity_dt >= {})
-            AND dsf.coe_pplan_sub_type_desc IN ('5G Business Internet mmWave', '5G Business Internet C-Band', '5G Home mmWave', '5G Home C-Band', '4G LTE Home')
-            """.format(rpt_mth_value, rpt_mth_value)
+            WHERE (dsf.rpt_mth BETWEEN {} AND {} OR dsf.activity_dt BETWEEN {} AND {}) 
+            AND dsf.coe_pplan_sub_type_desc IN ('5G Business Internet mmWave', '5G Business Internet C-Band', '5G Home mmWave', '5G Home C-Band', '4G LTE Home') 
+            """.format(rpt_mth_value_start, rpt_mth_value_end, rpt_mth_value_start, rpt_mth_value_end)
+                
+
 
     """    """
     fiveg_customer_df = query_to_edw(fiveg_customer_query)
