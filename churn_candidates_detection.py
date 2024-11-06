@@ -26,6 +26,7 @@ def read_and_union_parquet_by_date(cpe_start_date_str: str, cpe_end_date_str: st
         features = ["scaled_5g_uptime","scaled_fiveg_usage_percentage","scaled_sqrt_data_usage",
                     "scaled_uploadresult","scaled_downloadresult","scaled_latency",
                     "scaled_RSRP","scaled_avg_CQI","scaled_SNR",
+                    "scaled_switch_count_sum","scaled_reset_count","scaled_avg_MemoryPercentFree","scaled_percentageReceived",
                     "dataScore","networkSpeedScore","networkSignalScore","networkFailureScore","deviceScore",
                     ]
 
@@ -89,25 +90,23 @@ class CPEChurnAnalyzer:
     def get_recent_active_not_churn_features(self):
         
         fiveg_customer_df = spark.read.parquet( hdfs_pd + "/user/ZheS/5g_Churn/fiveg_customer_df")\
-                            .withColumn("mdn_5g", F.trim(F.col("MTN")))\
-                            .withColumn("ACTIVITY_CD", F.trim(F.col("ACTIVITY_CD")))
-
-        filtered_df = fiveg_customer_df.filter(F.col("activity_cd").isin("AC", "D3", "DE"))
+                                .withColumn("mdn_5g", F.trim(F.col("MTN")))\
+                                .withColumn("ACTIVITY_CD", F.trim(F.col("ACTIVITY_CD")))\
+                                .filter(F.col("activity_cd").isin("AC", "D3", "DE"))
 
         # Filter to find records with only one "AC" and no "D3" or "DE"
-        activity_count_df = filtered_df.groupBy("cust_id", "mdn_5g")\
-                                        .agg(
-                                            F.count(F.when(F.col("activity_cd") == "AC", 1)).alias("ac_count"),
-                                            F.count(F.when(F.col("activity_cd").isin("D3", "DE"), 1)).alias("de_d3_count")
-                                        )
-
-        result_df = activity_count_df.filter(
-                                                 (F.col("de_d3_count") == 0)
+        recent_act_user = fiveg_customer_df.groupBy("cust_id", "mdn_5g")\
+                                            .agg(
+                                                F.count(F.when(F.col("activity_cd") == "AC", 1)).alias("ac_count"),
+                                                F.count(F.when(F.col("activity_cd").isin("D3", "DE"), 1)).alias("de_d3_count")
                                             )\
-                                    .select("cust_id", "mdn_5g")
+                                            .filter(
+                                                (F.col("ac_count") == 1) & (F.col("de_d3_count") == 0)
+                                            )\
+                                            .select("cust_id", "mdn_5g")
 
 
-        df_recent_active = fiveg_customer_df.join(result_df, on=["cust_id", "mdn_5g"], how="inner")\
+        df_recent_active = fiveg_customer_df.join(recent_act_user, on=["cust_id", "mdn_5g"], how="inner")\
                                             .join(self.cpe_all_records_df, ["mdn_5g","cust_id"])
 
         return df_recent_active
