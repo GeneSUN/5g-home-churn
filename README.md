@@ -38,7 +38,12 @@ Two integration approaches:
 
 ## ⚖️ 3. Mixed Causality & Dilution
 
+
+<img width="460" height="257" alt="Screenshot 2025-11-02 at 7 28 25 PM" src="https://github.com/user-attachments/assets/c4185658-a1a0-47ce-a010-5aec43e36595" />
+
+
 <img width="1355" height="489" alt="Screenshot 2025-11-02 at 7 27 27 PM" src="https://github.com/user-attachments/assets/a472e77f-7942-4361-b16e-6eb229ece5e7" />
+
 
 
 ---
@@ -49,14 +54,3 @@ Two integration approaches:
 - **Actionability vs Accuracy:** early predictions are noisier but more useful — pick a lead time that maximizes business value.
 
 ---
-
-## ✅ Key Takeaways
-- Avoid temporal leakage → predictive, not reactive.  
-- Fuse static + temporal data for richer modeling.  
-- Use two-stage, causality-aware architectures.  
-- Segment for local signal strength and interpretability.  
-- Optimize for *business impact*, not just AUC.
-
----
-
-📘 *Inspired by real-world telecom churn modeling and anomaly detection research.*
