@@ -38,9 +38,21 @@ Two integration approaches:
 
 ## ⚖️ 3. Mixed Causality & Dilution
 
-
-<img width="460" height="257" alt="Screenshot 2025-11-02 at 7 28 25 PM" src="https://github.com/user-attachments/assets/c4185658-a1a0-47ce-a010-5aec43e36595" />
-
+```text
+Dilution Effect of Mixed Causality
+├── Problem: Multiple churn causes
+│   ├── 20% due to network issues
+│   ├── 80% due to non-network reasons
+│   └── Single model → diluted signal
+├── Solution: Two-Stage Pipeline
+│   ├── Stage 1: Service-risk detector (CUSUM / LSTM-AE)
+│   ├── Stage 2: Churn classifier using Stage-1 signals
+│   └── Outcome: interpretable churn alerts (e.g., SNR↓ 25%)
+└── Local Signal Principle (Heterogeneity-Aware Modeling)
+    ├── Global models blur heterogeneous causes
+    ├── Segmentation reveals coherent subpatterns
+    └── Broader use: churn, credit, forecasting, medical risk
+```
 
 <img width="1355" height="489" alt="Screenshot 2025-11-02 at 7 27 27 PM" src="https://github.com/user-attachments/assets/a472e77f-7942-4361-b16e-6eb229ece5e7" />
 
