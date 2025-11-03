@@ -9,7 +9,7 @@ This project explores how **time-series modeling** improves churn prediction by 
 
 - https://medium.com/@injure21/time-series-classification-a-practical-field-guide-with-a-telco-churn-walkthrough-271fa59b9bd0
 - https://medium.com/@injure21/time-series-classification-churn-c33f85a038fd
-- https://colab.research.google.com/drive/1CGFJHqtr3R6KMDE4qNyd7sHLn0A4eg61?source=post_page-----271fa59b9bd0---------------------------------------
+- https://colab.research.google.com/drive/1CGFJHqtr3R6KMDE4qNyd7sHLn0A4eg61
 ---
 
 ## 🚫 1. Avoid Temporal Leakage
@@ -49,8 +49,9 @@ Two integration approaches:
 ---
 
 ## ⚙️ 4. Practical Notes
+- **Actionability vs Accuracy:** early predictions are noisier but more useful — pick a lead time that maximizes business value.
 - **Imbalance / Drift:** use weighted loss or threshold tuning.  
 - **Label Noise:** define churn clearly (e.g., 60-day inactivity).  
-- **Actionability vs Accuracy:** early predictions are noisier but more useful — pick a lead time that maximizes business value.
+
 
 ---
